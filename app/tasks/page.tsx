@@ -12,3 +12,10 @@ const Task = ({ text }: { text: string }) => {
   )
 }
 
+interface TaskT {
+  id: number | null,
+  text: string,
+  description: string,
+  notes: string[]
+}
+
