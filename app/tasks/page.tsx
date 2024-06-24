@@ -26,3 +26,34 @@ interface TaskT {
   notes: string[]
 }
 
+export default function Tasks() {
+
+  const [CurrentTasks, setCurrentTasks] = useState<TaskT[]>([])
+
+  function AddTask(newTask: TaskT) {
+    setCurrentTasks([newTask, ...CurrentTasks])
+  }
+
+  return (
+    <main className="h-full flex flex-col items-center justify-center">
+      <section className="w-[40rem] h-[40rem] space-y-2">
+        <div className="flex bg-[var(--primary)] w-full p-2 rounded-2xl">
+          <input maxLength={75} className="w-full h-8 border-2 border-gray-600 outline-none p-5 rounded-2xl m-auto bg-transparent" placeholder="Type here" onKeyUp={(event) => {
+            event.preventDefault()
+            if (event.key != "Enter") { return }
+            const input_element = (event.target as HTMLInputElement)
+            if (input_element.value.length <= 0) { return }
+            AddTask({ id: null, text: input_element.value, description: "", notes: [] } satisfies TaskT)
+          }} />
+        </div>
+        <ol className="h-full">
+          {
+            CurrentTasks.map((item) => {
+              return <Task text={item.text} />
+            })
+          }
+        </ol>
+      </section>
+    </main>
+  )
+}
