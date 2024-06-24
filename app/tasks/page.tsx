@@ -48,8 +48,8 @@ export default function Tasks() {
         </div>
         <ol className="h-full">
           {
-            CurrentTasks.map((item) => {
-              return <Task text={item.text} />
+            CurrentTasks.map((item, index) => {
+              return <Task key={index} text={item.text} />
             })
           }
         </ol>
