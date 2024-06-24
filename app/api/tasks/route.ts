@@ -66,12 +66,34 @@ export async function PUT(request: Request) {
 
     if (!params["id"]) return NextResponse.json({ error: true, error_message: "ID doesn't exist", tasks: [] })
 
-    await prisma.task.update({ where: { sessionId: params["session"], id: Number(params["id"]) }, data: params["data"] })
+    await prisma.task.update({ where: { id: Number(params["id"]), sessionId: params["session"] }, data: params["data"] })
 
     await prisma.$disconnect()
     return NextResponse.json({ error: false, error_message: "", success: true })
   } catch (_) {
     await prisma.$disconnect()
+    return NextResponse.json({ error: true, error_message: "Unkown", succress: false })
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    await prisma.$connect()
+    const params = extractParams(request.url)
+
+    console.log(params)
+
+    if (!params["session"]) return NextResponse.json({ error: true, error_message: "Session ID doesn't exist", tasks: [] })
+    if (typeof params["session"] != "string") return NextResponse.json({ error: true, error_message: "Session ID is incorrect", tasks: [] })
+
+
+    if (!params["id"]) return NextResponse.json({ error: true, error_message: "ID doesn't exist", tasks: [] })
+
+    await prisma.task.delete({ where: { id: Number(params["id"]), sessionId: params["session"] } })
+
+    await prisma.$disconnect()
+    return NextResponse.json({ error: false, error_message: "", success: true })
+  } catch (_) {
     return NextResponse.json({ error: true, error_message: "Unkown", succress: false })
   }
 }

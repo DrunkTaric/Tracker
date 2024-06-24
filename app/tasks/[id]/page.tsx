@@ -3,7 +3,7 @@ import { FaPen } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { PiNotepadBold } from "react-icons/pi";
 import { Task as TaskT } from "@prisma/client";
-import { isAuthenticated } from "@/functions/auth";
+import { useMutation } from "react-query";
 
 const Note = ({ text }: { text: string }) => {
   return (
@@ -16,19 +16,25 @@ const Note = ({ text }: { text: string }) => {
 export default function Tasks({ params }: { params: { id: number } }) {
 
   const [Task, setTask] = useState<TaskT | undefined>();
-
-  async function fetchData() {
-    if (isAuthenticated()) {
-      fetch(`/api/tasks?session=${localStorage.getItem("session")}&id=${params.id}`).then(async (res) => {
-        const data = await res.json();
-        setTask(data.tasks);
-      })
-    }
-  }
+  const { isError, isLoading, mutate } = useMutation({
+    mutationFn: async () => {
+      return await fetch(`/api/tasks?session=${localStorage.getItem("session")}&id=${params.id}`).then((res) => res.json())
+    },
+    onSuccess(data, variables, context) {
+      setTask(data.tasks)
+    },
+  })
 
   useEffect(() => {
-    fetchData();
-  }, [])
+    mutate()
+  }, [mutate])
+
+  if (!Task) {
+    return (
+      <main className="h-full flex p-32 pb-0">
+      </main>
+    )
+  }
 
   return (
     <main className="h-full flex p-32 pb-0">
