@@ -1,3 +1,10 @@
+"use client"
+
+import Link from "next/link"
+import { useState } from "react";
+import { IoIosLink } from "react-icons/io";
+import { IoIosRemoveCircleOutline } from "react-icons/io";
+
 const Task = ({ text }: { text: string }) => {
   return (
     <li className="bg-[var(--primary)] border-4 border-gray-600 rounded-xl w-full p-2 rounded-2xl text-gray-500 hover:text-gray-700">
