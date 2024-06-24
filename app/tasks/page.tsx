@@ -10,7 +10,9 @@ import { Authenticate, isAuthenticated } from "@/functions/auth";
 import { useMutation } from "react-query";
 import { useEffect, useState } from "react";
 
-const Task = ({ item }: { item: TaskT & { isLoading?: boolean } }) => {
+type TaskExportedType = TaskT & { isLoading?: boolean }
+
+const Task = ({ item }: { item: TaskExportedType }) => {
   if (item.isLoading) {
     return (
       <li className="flex bg-[var(--primary)] border-4 border-gray-600 rounded-xl w-full p-2 rounded-2xl text-gray-500 hover:text-gray-700">
@@ -39,7 +41,7 @@ const Task = ({ item }: { item: TaskT & { isLoading?: boolean } }) => {
 
 export default function Tasks() {
 
-  const [currentTasks, setCurrentTasks] = useState<TaskT[]>([])
+  const [currentTasks, setCurrentTasks] = useState<TaskExportedType[]>([])
 
   const { isError, isLoading, data, mutate } = useMutation({
     mutationFn: async () => {
@@ -52,11 +54,20 @@ export default function Tasks() {
 
   useEffect(() => {
     mutate()
-  }, [])
+  }, [mutate])
 
   async function AddTask(text: string) {
     if (!isAuthenticated()) { await Authenticate() }
-    setCurrentTasks([{ isLoading: true }, ...currentTasks])
+    setCurrentTasks([{
+      id: 0,
+      notes: [],
+      text: text,
+      description: "",
+      isLoading: true,
+      updatedAt: new Date(),
+      createdAt: new Date(),
+      sessionId: localStorage.getItem("session") ?? "",
+    }, ...currentTasks])
     await fetch(`/api/tasks?session=${localStorage.getItem("session")}&text=${text}`, { method: "POST" })
     mutate()
   }

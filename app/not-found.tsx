@@ -9,7 +9,7 @@ export default function About() {
         alt="Cute golang image"
         width={500} height={500}
       />
-      <h1>the page you trying to reach doesn't exist</h1>
+      <h1>the page you trying to reach doesn&apost exist</h1>
     </main>
   )
 }
