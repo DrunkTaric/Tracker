@@ -13,4 +13,3 @@ export function extractParams(url: string): { [key: string]: string | number } {
 
   return object
 }
-
