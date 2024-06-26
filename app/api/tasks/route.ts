@@ -55,6 +55,7 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
   try {
+    console.log("yooo")
     await prisma.$connect()
     const params = extractParams(request.url)
 
@@ -62,11 +63,14 @@ export async function PUT(request: Request) {
     if (typeof params["session"] != "string") return NextResponse.json({ error: true, error_message: "Session ID is incorrect", tasks: [] })
 
     if (!params["data"]) return NextResponse.json({ error: true, error_message: "Data object doesn't exist", tasks: [] })
-    if (typeof params["data"] != "object") return NextResponse.json({ error: true, error_message: "Data is incorrect", tasks: [] })
+    if (typeof params["data"] != "string") return NextResponse.json({ error: true, error_message: "Data is incorrect", tasks: [] })
+    if (!JSON.parse(params["data"] as string)) return NextResponse.json({ error: true, error_message: "Data is incorrect", tasks: [] })
 
     if (!params["id"]) return NextResponse.json({ error: true, error_message: "ID doesn't exist", tasks: [] })
 
-    await prisma.task.update({ where: { id: Number(params["id"]), sessionId: params["session"] }, data: params["data"] })
+    console.log("Checkers done")
+
+    await prisma.task.update({ where: { id: Number(params["id"]), sessionId: params["session"] }, data: JSON.parse(params["data"]) })
 
     await prisma.$disconnect()
     return NextResponse.json({ error: false, error_message: "", success: true })
@@ -81,11 +85,8 @@ export async function DELETE(request: Request) {
     await prisma.$connect()
     const params = extractParams(request.url)
 
-    console.log(params)
-
     if (!params["session"]) return NextResponse.json({ error: true, error_message: "Session ID doesn't exist", tasks: [] })
     if (typeof params["session"] != "string") return NextResponse.json({ error: true, error_message: "Session ID is incorrect", tasks: [] })
-
 
     if (!params["id"]) return NextResponse.json({ error: true, error_message: "ID doesn't exist", tasks: [] })
 
