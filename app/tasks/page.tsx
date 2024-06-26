@@ -7,6 +7,8 @@ import { IoIosRemoveCircleOutline } from "react-icons/io";
 
 import { Authenticate, isAuthenticated } from "@/functions/auth";
 import { useQuery } from "react-query";
+import axios from "axios";
+import { useState } from "react";
 
 type TaskExportedType = TaskT & { isLoading?: boolean }
 
@@ -34,18 +36,20 @@ const Task = ({ item, deleteFn }: { item: TaskExportedType, deleteFn: (id: numbe
 
 export default function Tasks() {
 
-  const { isError, isLoading, data, refetch } = useQuery(
+  const [currentTasks, setTasks] = useState<TaskExportedType[]>([])
+
+  const { isLoading, refetch } = useQuery(
     "Tasks",
-    () => fetch(`/api/tasks?session=${localStorage.getItem("session")}`).then((res) => res.json()), {
+    () => axios.get(`/api/tasks?session=${localStorage.getItem("session")}`).then((res) => res.data), {
     onSuccess(data) {
       data.tasks = data.tasks.reverse()
+      setTasks(data.tasks)
     },
     refetchOnMount: true
   });
 
   async function AddTask(text: string) {
-    if (!isAuthenticated()) { await Authenticate() }
-    (data.tasks as Array<TaskExportedType>).unshift({
+    setTasks([{
       id: 0,
       notes: [],
       text: text,
@@ -54,14 +58,14 @@ export default function Tasks() {
       updatedAt: new Date(),
       createdAt: new Date(),
       sessionId: localStorage.getItem("session") ?? "",
-    })
-    await fetch(`/api/tasks?session=${localStorage.getItem("session")}&text=${text}`, { method: "POST" })
+    }, ...currentTasks])
+    await axios.post(`/api/tasks?session=${localStorage.getItem("session")}&text=${text}`)
     refetch()
   }
 
 
   async function DeleteTask(id: number) {
-    await fetch(`/api/tasks?session=${localStorage.getItem("session")}&id=${id}`, { method: "DELETE" })
+    await axios.delete(`/api/tasks?session=${localStorage.getItem("session")}&id=${id}`)
     refetch()
   }
 
@@ -85,7 +89,7 @@ export default function Tasks() {
         </div>
         <ol className="appearance-none h-full space-y-1 overflow-y-auto">
           {
-            !isLoading ? (data.tasks.reverse()).map((item: TaskT, index: number) => {
+            !isLoading && currentTasks.length > 0 ? currentTasks.map((item: TaskT, index: number) => {
               return <Task key={index} item={item} deleteFn={DeleteTask} />
             })
               : [1, 2, 3, 4, 5].map((index) => {
