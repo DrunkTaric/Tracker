@@ -22,12 +22,12 @@ const TasksLoading = () => {
 
 export default function Tasks({ params }: { params: { id: number } }) {
 
-  const [showModal, setShowModal] = useState<boolean>(false)
   const { isLoading, data, refetch } = useQuery(
     "Task",
     () => fetch(`/api/tasks?session=${localStorage.getItem("session")}&id=${params.id}`).then((res) => res.json()), {
     refetchOnMount: true
   });
+  const [showModal, setShowModal] = useState<boolean>(false)
   const [dataModal, setDataModal] = useState<ModalProps>({
     limit: 0,
     type: "text",
@@ -78,8 +78,8 @@ export default function Tasks({ params }: { params: { id: number } }) {
             }
           </button>
         </section>
-        <section className="w-full h-[35rem] max-w-[40rem] h-full m-auto flex flex-col space-y-2 bg-[var(--primary)] rounded-2xl p-2">
-          <ol className="border-2 border-gray-600 h-full space-y-2 rounded-2xl p-2 overflow-y-auto">
+        <section className="w-full max-w-[40rem] h-full m-auto flex flex-col space-y-2 bg-[var(--primary)] rounded-2xl p-2">
+          <ol className="h-[35rem] border-2 border-gray-600 space-y-2 rounded-2xl p-2 overflow-y-auto">
             {
               data && (data.tasks.notes as string[]).map((msg, index) => {
                 return <Note text={msg} key={index} />

@@ -67,7 +67,7 @@ export default function Tasks() {
 
   return (
     <main className="h-full flex flex-col p-10 items-center justify-center">
-      <section className="w-full md:w-[40rem] lg:w-[45rem] max-h-[40rem] space-y-3">
+      <section className="w-full md:w-[40rem] lg:w-[45rem] space-y-3 max-h-[40rem]">
         <div className="flex bg-[var(--primary)] w-full p-2 rounded-2xl">
           <input
             maxLength={30}
